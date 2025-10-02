@@ -1,103 +1,101 @@
-import Image from "next/image";
+"use client";
+
+import React, { useEffect, useState } from "react";
+
+interface Location {
+  Location: string;
+  ["Popular Destinations"]: string[];
+  ["Service Features"]: string[];
+  Latitude: number | null;
+  Longitude: number | null;
+  ["Short Description"]: string;
+  ["Long Description"]: string;
+  Keywords: string;
+  ["SEO Meta Description"]: string;
+  ["SEO Title"]: string;
+}
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [locations, setLocations] = useState<Location[]>([]);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  useEffect(() => {
+    fetch("/locations.json")
+      .then((res) => res.json())
+      .then((data) => setLocations(data));
+  }, []);
+
+  return (
+    <main className="p-6">
+      <h1 className="text-2xl font-bold mb-6">London Minicab Locations {locations && locations?.length}</h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {locations.map((loc, index) => (
+          <div
+            key={index}
+            className="rounded-2xl shadow-md bg-white p-6 hover:shadow-xl transition text-sm"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+            {/* Location Title */}
+            <h2 className="text-lg font-bold mb-2 text-black">{loc.Location}</h2>
+
+            {/* Short + Long Description */}
+            <p className="text-gray-700 mb-2">{loc["Short Description"]}</p>
+            <p className="text-gray-600 text-xs mb-3">
+              {loc["Long Description"]}
+            </p>
+
+            {/* Popular Destinations */}
+            <div className="mb-2">
+              <strong className="text-gray-800">Popular Destinations:</strong>
+              <ul className="list-disc list-inside text-gray-600">
+                {loc["Popular Destinations"].map((d, i) => (
+                  <li key={i}>{d}</li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Service Features */}
+            <div className="mb-2">
+              <strong className="text-gray-800">Service Features:</strong>
+              <ul className="list-disc list-inside text-gray-600">
+                {loc["Service Features"].map((f, i) => (
+                  <li key={i}>{f}</li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Latitude & Longitude */}
+            <div className="mb-2">
+              <strong className="text-gray-800">Coordinates:</strong>
+              <p className="text-gray-600">
+                Lat: {loc.Latitude ?? "N/A"}, Lng: {loc.Longitude ?? "N/A"}
+              </p>
+            </div>
+
+            {/* Keywords */}
+            <div className="mb-2">
+              <strong className="text-gray-800">Keywords:</strong>
+              <p className="text-gray-600">{loc.Keywords}</p>
+            </div>
+
+            {/* SEO Meta Description */}
+            <div className="mb-2">
+              <strong className="text-gray-800">SEO Meta Description:</strong>
+              <p className="text-gray-600">{loc["SEO Meta Description"]}</p>
+            </div>
+
+            {/* SEO Title */}
+            <div className="mb-2">
+              <strong className="text-gray-800">SEO Title:</strong>
+              <p className="text-gray-600">{loc["SEO Title"]}</p>
+            </div>
+
+            {/* CTA */}
+            <button className="mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700">
+              Book in {loc.Location}
+            </button>
+          </div>
+        ))}
+      </div>
+    </main>
   );
 }
